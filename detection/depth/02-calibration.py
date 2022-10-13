@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 as cv
+import os
 import glob
 
 
@@ -17,10 +18,10 @@ objp[:,:2] = np.mgrid[0:CHESSBOARD_SIZE[0], 0:CHESSBOARD_SIZE[1]].T.reshape(-1, 
 
 OPTIMIZE_ALPHA = 0.1
 
-
-
-imageL = glob.glob('data/left/*.jpg')
-imageR = glob.glob('data/right/*.jpg')
+ROOT_PATH = os.path.dirname(__file__)
+IMAGE_PATH = os.path.join(ROOT_PATH, 'data/')
+imageL = glob.glob(IMAGE_PATH + 'left*.jpg')
+imageR = glob.glob(IMAGE_PATH + 'right*.jpg')
 
 def findChessboard(imageglob):
     # Arrays to store object points and image points from all the images.
@@ -67,7 +68,7 @@ recL, recR, projL, projR, dispartityToDepthMap, roiL, roiR = cv.stereoRectify(
 mapxL, mapyL = cv.initUndistortRectifyMap(mtxL, distL, recL, projL, imgSize, cv.CV_32FC1)
 mapxR, mapyR = cv.initUndistortRectifyMap(mtxR, distR, recR, projR, imgSize, cv.CV_32FC1)
 
-outputFile = 'calibrate'
+outputFile = os.path.join(ROOT_PATH, 'calibrate')
 
 np.savez_compressed(outputFile, imgSize=imgSize,
         mapxL=mapxL, mapyL=mapyL, roiL=roiL,
@@ -75,13 +76,13 @@ np.savez_compressed(outputFile, imgSize=imgSize,
 
 
 # draw for example
-imgL = cv.imread('data/left/0.jpg')
-imgR = cv.imread('data/right/0.jpg')
+imgL = cv.imread(IMAGE_PATH + 'left0.jpg')
+imgR = cv.imread(IMAGE_PATH + 'right0.jpg')
 
 dstL = cv.remap(imgL, mapxL, mapyL, cv.INTER_LINEAR)
 dstR = cv.remap(imgR, mapxR, mapyR, cv.INTER_LINEAR)
 
-cv.imwrite('calibrate_result_left.jpg', dstL)
-cv.imwrite('calibrate_result_right.jpg', dstR)
+cv.imwrite(os.path.join(ROOT_PATH, 'calibrate_result_left.jpg'), dstL)
+cv.imwrite(os.path.join(ROOT_PATH, 'calibrate_result_right.jpg'), dstR)
 
 cv.destroyAllWindows()

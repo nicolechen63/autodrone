@@ -1,12 +1,19 @@
 import cv2 as cv
+import os
 
+# path for saving the images for calibration
+ROOT_PATH = os.path.dirname(__file__)
+IMAGE_PATH = os.path.join(ROOT_PATH, 'data/')
+if not os.path.exists(IMAGE_PATH):
+    os.makedirs(IMAGE_PATH)
 
+i = 0 # image index
+
+# camera setting
 CAMERA_HEIGHT = 720
 CAMERA_WIDTH = 1920 # left right together
 
-i = 0
 cap = cv.VideoCapture(1)
-
 cap.set(cv.CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT)
 cap.set(cv.CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH)
 
@@ -25,8 +32,8 @@ while (True):
 
     k = cv.waitKey(1)
     if k & 0xFF == ord('c'): # press c to capture image
-        cv.imwrite('data/left/' + str(i) + '.jpg', im0)
-        cv.imwrite('data/right/' + str(i) + '.jpg', im1)
+        cv.imwrite(IMAGE_PATH + '/left' + str(i) + '.jpg', im0)
+        cv.imwrite(IMAGE_PATH + '/right' + str(i) + '.jpg', im1)
         i += 1
 
     elif k & 0xFF == ord('q'): # press q to exit
