@@ -40,10 +40,11 @@ while(True):
     imgl = frame[0:h, 0:w]
     imgr = frame[0:h, w:width]
 
+    # calibrate left and right
     imgl = cal.calibrate(imgl, 'L')
     imgr = cal.calibrate(imgr, 'R')
 
-    depthmap = cal.depthMap(imgl, imgr)
+    depthmap = cal.depthMap(imgl, imgr) # get depth map from stereo matching
 
     # cv2.imshow('left', imgl)
     # cv2.imshow('right', imgr)
@@ -58,7 +59,7 @@ while(True):
     cv2.putText(img, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
 
     cv2.imshow('img', img)
-    cv2.setMouseCallback('img', onClick)
+    cv2.setMouseCallback('img', onClick) # click on image to get the depth
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
