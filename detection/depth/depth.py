@@ -36,12 +36,15 @@ class Depth:
         self.stereoMatcher.setSpeckleRange(speckleRange)
         self.stereoMatcher.setSpeckleWindowSize(speckleWindowSize)
 
-    def depthMap(self, imgl, imgr):
+    def disparityMap(self, imgl, imgr):
         grayl = cv2.cvtColor(imgl, cv2.COLOR_BGR2GRAY)
         grayr = cv2.cvtColor(imgr, cv2.COLOR_BGR2GRAY)
 
-        disparity = self.stereoMatcher.compute(grayl, grayr) # disparity
-        disparity = (disparity/16.0 - self.minDisparity)/self.numDisparities # scale down and normalize
-        depth = (1/(disparity+0.000001) + 0.156733)/0.041136
+        self.disparity = self.stereoMatcher.compute(grayl, grayr) # disparity
+        self.disparity = (self.disparity/16.0 - self.minDisparity)/self.numDisparities # scale down and normalize
 
-        return depth
+        # return disparity
+        return self.disparity
+
+    def depthMap(self):
+        return (1/(self.disparity+0.000001) + 0.156733)/0.041136

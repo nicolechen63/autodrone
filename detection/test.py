@@ -1,16 +1,18 @@
 import cv2
 import numpy as np
+import os
 import time
 
 import depth.depth as depth
 import model.model as model
 
-
+#path
+ROOT_PATH = os.path.dirname(__file__)
 # camera input values
 CAMERA_HEIGHT = 720
 CAMERA_WIDTH = 1920 # left right together
 # calibration
-cal = depth.Depth()
+cal = depth.Depth(os.path.join(ROOT_PATH, 'depth/calibrate.npz'))
 # open camera
 cap = cv2.VideoCapture(1)
 # modify camera parameter
@@ -31,7 +33,7 @@ def onClick(event,x,y,flags,param):
 cal.createStereoMatch()
 
 # detection
-detect = model.FlowerDetection('trained/YOLOv5n/weights/best.pt')
+detect = model.FlowerDetection(os.path.join(ROOT_PATH, 'trained/YOLOv5n/weights/best.pt'))
 
 while(True):
     start_time = time.perf_counter()
@@ -44,19 +46,21 @@ while(True):
     imgl = cal.calibrate(imgl, 'L')
     imgr = cal.calibrate(imgr, 'R')
 
-    depthmap = cal.depthMap(imgl, imgr) # get depth map from stereo matching
+    disparity = cal.disparityMap(imgl, imgr) # first get the disparity from stereo matching
+    depthmap = cal.depthMap() # get actual depth map from disparity
 
     # cv2.imshow('left', imgl)
     # cv2.imshow('right', imgr)
-    cv2.imshow('depth', depthmap)
+    cv2.imshow('depth', disparity)
 
     # use left image for detecion
     results = detect.score_frame(imgl)
-    img = detect.plot_boxes(results, imgl)
+    img = detect.plot_boxes_depth(results, imgl, depthmap)
+    # img = detect.plot_boxes(results, imgl, depthmap)
 
     end_time = time.perf_counter()
     fps = 1 / np.round(end_time - start_time, 3)
-    cv2.putText(img, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
+    cv2.putText(img, f'FPS: {int(fps)}', (10,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
 
     cv2.imshow('img', img)
     cv2.setMouseCallback('img', onClick) # click on image to get the depth
