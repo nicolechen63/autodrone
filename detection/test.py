@@ -63,7 +63,7 @@ while(True):
     cv2.putText(img, f'FPS: {int(fps)}', (10,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
 
     cv2.imshow('img', img)
-    cv2.setMouseCallback('img', onClick) # click on image to get the depth
+    # cv2.setMouseCallback('img', onClick) # click on image to get the depth
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

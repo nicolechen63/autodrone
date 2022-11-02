@@ -63,7 +63,7 @@ cv::Mat Depth::disparityMap(cv::Mat imgl, cv::Mat imgr) {
 
 	stereo->compute(grayl, grayr, this->disparity);
 	this->disparity.convertTo(this->disparity, CV_32F, 1.0);
-	this->disparity = (this->disparity / 16.0f - (float)this->minDisparity) / (float)this->numDisparities;
+	this->disparity = (this->disparity / 16.0f - (float)this->minDisparity + 1.0f) / (float)this->numDisparities;
 
 	return this->disparity;
 }	

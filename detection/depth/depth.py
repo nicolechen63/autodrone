@@ -41,10 +41,10 @@ class Depth:
         grayr = cv2.cvtColor(imgr, cv2.COLOR_BGR2GRAY)
 
         self.disparity = self.stereoMatcher.compute(grayl, grayr) # disparity
-        self.disparity = (self.disparity/16.0 - self.minDisparity)/self.numDisparities # scale down and normalize
+        self.disparity = (self.disparity/16.0 - self.minDisparity + 1)/self.numDisparities # scale down and normalize to 0-1
 
         # return disparity
         return self.disparity
 
     def depthMap(self):
-        return (1/(self.disparity+0.000001) + 0.156733)/0.041136
+        return (1/(self.disparity+0.000000001))*25.268073 + 3.779730
