@@ -20,8 +20,8 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH)
 # warm up
 _, frame = cap.read()
-h, width,_ = frame.shape
-w = int(width/2)
+h, width2,_ = frame.shape
+w = int(width2/2)
 
 # set mouse click display distance
 def onClick(event,x,y,flags,param):
@@ -40,7 +40,7 @@ while(True):
 
     _, frame = cap.read()
     imgl = frame[0:h, 0:w]
-    imgr = frame[0:h, w:width]
+    imgr = frame[0:h, w:width2]
 
     # calibrate left and right
     imgl = cal.calibrate(imgl, 'L')
