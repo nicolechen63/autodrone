@@ -218,6 +218,7 @@ int main() {
     cap.release();
     cv::destroyAllWindows();*/
 
+    // use depth object
     Depth objd("calibration");
     objd.createStereoMatch();
 
