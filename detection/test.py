@@ -9,8 +9,8 @@ import model.model as model
 #path
 ROOT_PATH = os.path.dirname(__file__)
 # camera input values
-CAMERA_HEIGHT = 720
-CAMERA_WIDTH = 1920 # left right together
+CAMERA_HEIGHT = 480
+CAMERA_WIDTH = 1280 # left right together
 # calibration
 cal = depth.Depth(os.path.join(ROOT_PATH, 'depth/calibrate.npz'))
 # open camera
