@@ -33,6 +33,10 @@ cal.createStereoMatch()
 vid_stereo = cv2.VideoWriter(os.path.join(ROOT_PATH, 'vid_left.avi'), cv2.VideoWriter_fourcc(*'MJPG'), 30, (width,height))
 vid_disp = cv2.VideoWriter(os.path.join(ROOT_PATH, 'vid_disp.avi'), cv2.VideoWriter_fourcc(*'MJPG'), 30, (width,height))
 
+# helper for converting color map
+normalizer = mpl.colors.Normalize(vmin=0, vmax=1)
+mapper = cm.ScalarMappable(norm=normalizer, cmap='magma')
+
 # list of fps
 fps = []
 
@@ -42,53 +46,50 @@ while(True):
     if ret == False:
         break
 
-    else:
-        start_time = time.perf_counter()
+    start_time = time.perf_counter() # time for fps calculation
 
-        # split image to left and right
-        imgl = frame[0:height, 0:width]
-        imgr = frame[0:height, width:width2]
+    # split image to left and right
+    imgl = frame[0:height, 0:width]
+    imgr = frame[0:height, width:width2]
 
-        # calibrate left and right
-        imgl = cal.calibrate(imgl, 'L')
-        imgr = cal.calibrate(imgr, 'R')
+    # calibrate left and right
+    imgl = cal.calibrate(imgl, 'L')
+    imgr = cal.calibrate(imgr, 'R')
 
-        disparity = cal.disparityMap(imgl, imgr) # first get the disparity from stereo matching
-        depthmap = cal.depthMap() # get actual depth map from disparity
+    disparity = cal.disparityMap(imgl, imgr) # first get the disparity from stereo matching
+    depthmap = cal.depthMap() # get actual depth map from disparity
 
-        # convert to color scale image to display
-        normalizer = mpl.colors.Normalize(vmin=0, vmax=1)
-        mapper = cm.ScalarMappable(norm=normalizer, cmap='magma')
-        img_rgb = (mapper.to_rgba(disparity)[:, :, :3] * 255).astype(np.uint8)
-        img_bgr = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR)
+    # convert to color scale image to display
+    img_rgb = (mapper.to_rgba(disparity)[:, :, :3] * 255).astype(np.uint8)
+    img_bgr = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR)
 
-        # show image
-        # cv2.imshow('left', imgl)
-        # cv2.imshow('mapper', img_bgr)
-        # cv2.imshow('depth', disparity)
+    # show image
+    # cv2.imshow('left', imgl)
+    # cv2.imshow('mapper', img_bgr)
+    # cv2.imshow('depth', disparity)
 
-        # start writing to video output
-        vid_stereo.write(imgl)
-        vid_disp.write(img_bgr)
+    # start writing to video output
+    vid_stereo.write(imgl)
+    vid_disp.write(img_bgr)
 
-        # fps
-        end_time = time.perf_counter()
-        fps_ = 1 / np.round(end_time - start_time, 3)
-        # fps.append(fps_)
-        # print(fps_)
+    # fps
+    end_time = time.perf_counter()
+    fps_ = 1 / np.round(end_time - start_time, 3)
+    fps.append(fps_)
+    # print(fps_)
 
-        k = cv2.waitKey(1)
-        if k & 0xFF == 27: # 'esc' to quit
-            break
+    k = cv2.waitKey(1)
+    if k & 0xFF == 27: # 'esc' to quit
+        break
 
 # release and clean up
 vid.release()
-# vid_stereo.release()
+vid_stereo.release()
 vid_disp.release()
 
 cv2.destroyAllWindows()
 
 # print average fps
-print(np.max(fps))
-print(np.min(fps))
-print(np.average(fps))
+print('max: ' + str(np.max(fps)))
+print('min: ' + str(np.min(fps)))
+print('avg: ' + str(np.average(fps)))
