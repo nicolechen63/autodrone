@@ -1,4 +1,4 @@
-Modified code from original repo: https://github.com/jankais3r/Video-Depthify.git
+Modified code from original repo: https://github.com/jankais3r/Video-Depthify.git and https://github.com/isl-org/MiDaS.git 
 Inlcuded detection section of the YoloV5 model trained for flower detection
 Use the best.pt model in the path mentioned in depth_withDetection python file or adjust the path accordingly
 
