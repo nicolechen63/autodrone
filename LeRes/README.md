@@ -29,3 +29,6 @@ use the convert.py script if needed for .png or .jpg conversion (one to another)
 !python3 average.py
 !python3 merge.py
 !ffmpeg -framerate 30 -i ./merged/%06d.jpg -vcodec libx264 -pix_fmt yuv420p outputgarden.avi  --> stitch the frames together to make the video
+
+
+The LICENSE file from the original repo has been included.
